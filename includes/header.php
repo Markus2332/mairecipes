@@ -40,9 +40,12 @@ require_once __DIR__ . '/functions.php';
     body{
         margin-top: 9rem !important;
     }
+        #mainNav a{
+                   color: #fff !important;
+ 
+        }
     #mainNav{
         background-color: #375755 !important;
-        color: #fff !important;
         
         font-weight: 700 !important;
     }
