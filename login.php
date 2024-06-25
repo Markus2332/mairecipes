@@ -3,7 +3,9 @@ require __DIR__ . '/includes/db.php';
 require __DIR__ . '/includes/functions.php';
 include __DIR__ . '/includes/header.php';
 
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
@@ -17,6 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
+        
+        // Проверка на вывод перед заголовками
+        if (headers_sent($file, $line)) {
+            echo "Headers already sent in $file on line $line<br>";
+            exit();
+        }
+
         header("Location: dashboard.php");
         exit();
     } else {
