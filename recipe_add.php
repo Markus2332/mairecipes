@@ -66,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($stmt->execute()) {
                 echo "<div class='alert alert-success'>Recipe added successfully.</div>";
             } else {
-                echo "<div class='alert alert-danger'>Error: Could not add recipe.</div>";
+                $error_info = $stmt->errorInfo();
+                echo "<div class='alert alert-danger'>Error: Could not add recipe. Error Info: " . htmlspecialchars($error_info[2]) . "</div>";
             }
         } else {
             echo "<div class='alert alert-danger'>Sorry, there was an error uploading your file. Error code: " . $_FILES['photo']['error'] . "</div>";
