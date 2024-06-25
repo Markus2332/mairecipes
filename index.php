@@ -1,29 +1,33 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-require 'includes/db.php';
-require 'includes/functions.php';
-include 'includes/header.php';
+require __DIR__ . '/includes/db.php';
+require __DIR__ . '/includes/functions.php';
+include __DIR__ . '/includes/header.php';
 
-session_start();
-
-$stmt = $conn->prepare("SELECT r.title, r.ingredients, r.instructions, u.username FROM recipes r JOIN users u ON r.user_id = u.id");
+$stmt = $conn->prepare("SELECT * FROM recipes");
 $stmt->execute();
 $recipes = $stmt->fetchAll();
 ?>
 
-<h2>Recipes</h2>
-<a href="recipe_add.php">Add Recipe</a>
-<ul>
-    <?php foreach ($recipes as $recipe): ?>
-        <li>
-            <h3><?php echo htmlspecialchars($recipe['title']); ?></h3>
-            <p>By: <?php echo htmlspecialchars($recipe['username']); ?></p>
-            <p><?php echo nl2br(htmlspecialchars($recipe['ingredients'])); ?></p>
-            <p><?php echo nl2br(htmlspecialchars($recipe['instructions'])); ?></p>
-        </li>
-    <?php endforeach; ?>
-</ul>
+<div class="container">
+    <h2>Recipes</h2>
+    <div class="row">
+        <?php foreach ($recipes as $recipe): ?>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <img src="<?php echo htmlspecialchars($recipe['photo']); ?>" class="card-img-top" alt="Recipe Photo">
+                <div class="card-body">
+                    <h5 class="card-title"><?php echo htmlspecialchars($recipe['title']); ?></h5>
+                    <p class="card-text">
+                        <strong>Cooking Time:</strong> <?php echo htmlspecialchars($recipe['cooking_time']); ?> minutes<br>
+                        <strong>Ingredients:</strong> <?php echo htmlspecialchars($recipe['ingredients']); ?><br>
+                        <strong>Instructions:</strong> <?php echo htmlspecialchars($recipe['instructions']); ?><br>
+                    </p>
+                    <a href="recipe.php?id=<?php echo $recipe['id']; ?>" class="btn btn-primary">View Full Recipe</a>
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>
