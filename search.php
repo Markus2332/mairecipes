@@ -1,13 +1,12 @@
 <?php
-require __DIR__ . '/includes/db.php';
-require __DIR__ . '/includes/functions.php';
 include __DIR__ . '/includes/header.php';
 
 $search_query = '';
 $recipes = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['query'])) {
-    $search_query = $_GET['query'];
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['search'])) {
+    $search_query = $_GET['search'];
+    require __DIR__ . '/includes/db.php';
     $stmt = $conn->prepare("SELECT * FROM recipes WHERE title LIKE :query");
     $stmt->bindValue(':query', '%' . $search_query . '%');
     $stmt->execute();
@@ -19,7 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['query'])) {
     <h2>Search Recipes</h2>
     <form method="GET" action="search.php">
         <div class="form-group">
-            <input type="text" name="query" class="form-control" placeholder="Search for recipes..." value="<?php echo htmlspecialchars($search_query); ?>" required>
+            <label for="search">Search for a recipe:</label>
+            <input type="text" id="search" name="search" class="form-control" value="<?php echo htmlspecialchars($search_query); ?>" required>
         </div>
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
@@ -49,4 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['query'])) {
     </div>
 </div>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php
+include __DIR__ . '/includes/footer.php';
+?>
