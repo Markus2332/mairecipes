@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require __DIR__ . '/includes/db.php';
 require __DIR__ . '/includes/functions.php';
 include __DIR__ . '/includes/header.php';
@@ -20,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         
-        // Проверка на вывод перед заголовками
         if (headers_sent($file, $line)) {
             echo "Headers already sent in $file on line $line<br>";
             exit();
@@ -53,3 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
+<?php
+ob_end_flush();
+?>
