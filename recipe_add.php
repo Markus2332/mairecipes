@@ -10,12 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ingredients = $_POST['ingredients'];
     $instructions = $_POST['instructions'];
     $dietary_preferences = $_POST['dietary_preferences'];
-    $allergies = $_POST['allergies'];
     $cooking_skill = $_POST['cooking_skill'];
-    $cooking_frequency = $_POST['cooking_frequency'];
     $favorite_cuisine = $_POST['favorite_cuisine'];
     $dietary_restrictions = $_POST['dietary_restrictions'];
     $meal_preferences = implode(', ', $_POST['meal_preferences']);
+    $cooking_time = $_POST['cooking_time'];
     $user_id = $_SESSION['user_id']; // Assuming the user is logged in and user_id is stored in session
 
     // Handle file upload
@@ -51,18 +50,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Sorry, your file was not uploaded.<br>";
     } else {
         if (move_uploaded_file($photo["tmp_name"], $target_file)) {
-            $stmt = $conn->prepare("INSERT INTO recipes (user_id, title, ingredients, instructions, dietary_preferences, allergies, cooking_skill, cooking_frequency, favorite_cuisine, dietary_restrictions, meal_preferences, created_at, photo) VALUES (:user_id, :title, :ingredients, :instructions, :dietary_preferences, :allergies, :cooking_skill, :cooking_frequency, :favorite_cuisine, :dietary_restrictions, :meal_preferences, NOW(), :photo)");
+            $stmt = $conn->prepare("INSERT INTO recipes (user_id, title, ingredients, instructions, dietary_preferences, cooking_skill, favorite_cuisine, dietary_restrictions, meal_preferences, cooking_time, created_at, photo) VALUES (:user_id, :title, :ingredients, :instructions, :dietary_preferences, :cooking_skill, :favorite_cuisine, :dietary_restrictions, :meal_preferences, :cooking_time, NOW(), :photo)");
             $stmt->bindParam(':user_id', $user_id);
             $stmt->bindParam(':title', $title);
             $stmt->bindParam(':ingredients', $ingredients);
             $stmt->bindParam(':instructions', $instructions);
             $stmt->bindParam(':dietary_preferences', $dietary_preferences);
-            $stmt->bindParam(':allergies', $allergies);
             $stmt->bindParam(':cooking_skill', $cooking_skill);
-            $stmt->bindParam(':cooking_frequency', $cooking_frequency);
             $stmt->bindParam(':favorite_cuisine', $favorite_cuisine);
             $stmt->bindParam(':dietary_restrictions', $dietary_restrictions);
             $stmt->bindParam(':meal_preferences', $meal_preferences);
+            $stmt->bindParam(':cooking_time', $cooking_time);
             $stmt->bindParam(':photo', $target_file);
 
             if ($stmt->execute()) {
@@ -98,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         
         <div class="form-group">
-            <label for="dietary_preferences">Dietary Preferences:</label>
+            <label for="dietary_preferences">Special Tag:</label>
             <select id="dietary_preferences" name="dietary_preferences" class="form-control">
                 <option value="none">None</option>
                 <option value="vegetarian">Vegetarian</option>
@@ -113,12 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="form-group">
-            <label for="allergies">Allergies:</label>
-            <input type="text" id="allergies" name="allergies" class="form-control" placeholder="E.g., peanuts, shellfish">
-            <p class="comment">Optional: List any allergies you have.</p>
-        </div>
-
-        <div class="form-group">
             <label for="cooking_skill">Cooking Skill Level:</label>
             <select id="cooking_skill" name="cooking_skill" class="form-control">
                 <option value="beginner">Beginner</option>
@@ -128,18 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="form-group">
-            <label for="cooking_frequency">How often do you cook?</label>
-            <select id="cooking_frequency" name="cooking_frequency" class="form-control">
-                <option value="daily">Daily</option>
-                <option value="few_times_week">A few times a week</option>
-                <option value="once_week">Once a week</option>
-                <option value="few_times_month">A few times a month</option>
-                <option value="rarely">Rarely</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="favorite_cuisine">Favorite Cuisine:</label>
+            <label for="favorite_cuisine">Cuisine:</label>
             <select id="favorite_cuisine" name="favorite_cuisine" class="form-control">
                 <option value="italian">Italian</option>
                 <option value="chinese">Chinese</option>
@@ -155,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="form-group">
-            <label for="dietary_restrictions">Do you have any dietary restrictions?</label>
+            <label for="dietary_restrictions">Diet: </label>
             <select id="dietary_restrictions" name="dietary_restrictions" class="form-control">
                 <option value="none">None</option>
                 <option value="low_carb">Low Carb</option>
@@ -166,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="form-group">
-            <label for="meal_preferences">Preferred meal types:</label>
+            <label for="meal_preferences">Types:</label>
             <select id="meal_preferences" name="meal_preferences[]" class="form-control" multiple>
                 <option value="breakfast">Breakfast</option>
                 <option value="lunch">Lunch</option>
@@ -176,6 +157,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <option value="beverage">Beverage</option>
             </select>
             <p class="comment">Select your preferred meal types (hold Ctrl or Cmd to select multiple).</p>
+        </div>
+
+        <div class="form-group">
+            <label for="cooking_time">Cooking Time (in minutes):</label>
+            <input type="number" id="cooking_time" name="cooking_time" class="form-control" required>
         </div>
 
         <div class="form-group">
