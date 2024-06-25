@@ -38,5 +38,15 @@ require_once __DIR__ . '/functions.php';
 </header>
 <style>
     body{
-    margin-top: 9rem !important;}
+    margin-top: 9rem !important;
+    }
+    #maninNav{
+        backgroound-color: #375755
+        color: #ffff
+        font- family: "SB Heading", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+            "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+            "Segoe UI Symbol", "Noto Color Emoji";
+        font-weight: 700;
+        }
+    }
 </style>
