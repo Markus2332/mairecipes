@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "<div class='alert alert-danger'>Error: Could not add recipe.</div>";
             }
         } else {
-            echo "<div class='alert alert-danger'>Sorry, there was an error uploading your file.</div>";
+            echo "<div class='alert alert-danger'>Sorry, there was an error uploading your file. Error code: " . $_FILES['photo']['error'] . "</div>";
         }
     }
 }
