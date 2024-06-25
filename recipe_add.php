@@ -3,7 +3,14 @@ require __DIR__ . '/includes/db.php';
 require __DIR__ . '/includes/functions.php';
 include __DIR__ . '/includes/header.php';
 
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['user_id'])) {
+    echo "<div class='alert alert-danger'>Error: User not logged in.</div>";
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
@@ -15,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $dietary_restrictions = $_POST['dietary_restrictions'];
     $meal_preferences = implode(', ', $_POST['meal_preferences']);
     $cooking_time = $_POST['cooking_time'];
-    $user_id = $_SESSION['user_id']; // Assuming the user is logged in and user_id is stored in session
+    $user_id = $_SESSION['user_id'];
 
     // Handle file upload
     $photo = $_FILES['photo'];
@@ -157,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <option value="dessert">Dessert</option>
                 <option value="beverage">Beverage</option>
             </select>
-            <p class="comment">Select your preferred meal types (hold Ctrl or Cmd to select multiple).</p>
+            <p class="comment">Select meal types (hold Ctrl or Cmd to select multiple).</p>
         </div>
 
         <div class="form-group">
