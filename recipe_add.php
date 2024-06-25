@@ -13,16 +13,34 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = $_POST['title'];
-    $ingredients = $_POST['ingredients'];
-    $instructions = $_POST['instructions'];
+    $errors = [];
+
+    $title = trim($_POST['title']);
+    $ingredients = trim($_POST['ingredients']);
+    $instructions = trim($_POST['instructions']);
     $dietary_preferences = $_POST['dietary_preferences'];
     $cooking_skill = $_POST['cooking_skill'];
     $favorite_cuisine = $_POST['favorite_cuisine'];
     $dietary_restrictions = $_POST['dietary_restrictions'];
     $meal_preferences = implode(', ', $_POST['meal_preferences']);
-    $cooking_time = $_POST['cooking_time'];
+    $cooking_time = trim($_POST['cooking_time']);
     $user_id = $_SESSION['user_id'];
+
+    if ($title === '') {
+        $errors[] = 'Title is required.';
+    }
+
+    if ($ingredients === '') {
+        $errors[] = 'Ingredients are required.';
+    }
+
+    if ($instructions === '') {
+        $errors[] = 'Instructions are required.';
+    }
+
+    if ($cooking_time === '' || $cooking_time <= 0) {
+        $errors[] = 'Cooking time must be a positive number.';
+    }
 
     // Handle file upload
     $photo = $_FILES['photo'];
@@ -31,31 +49,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $upload_ok = 1;
     $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    // Check if file is an actual image
-    $check = getimagesize($photo["tmp_name"]);
-    if ($check !== false) {
-        $upload_ok = 1;
+    if ($photo['error'] != UPLOAD_ERR_OK) {
+        $errors[] = 'Error uploading the file.';
     } else {
-        echo "File is not an image.<br>";
-        $upload_ok = 0;
+        // Check if file is an actual image
+        $check = getimagesize($photo["tmp_name"]);
+        if ($check === false) {
+            $errors[] = 'File is not an image.';
+            $upload_ok = 0;
+        }
+
+        // Check file size
+        if ($photo["size"] > 500000) {
+            $errors[] = 'Sorry, your file is too large.';
+            $upload_ok = 0;
+        }
+
+        // Allow certain file formats
+        if ($file_type != "jpg" && $file_type != "png" && $file_type != "jpeg" && $file_type != "gif") {
+            $errors[] = 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.';
+            $upload_ok = 0;
+        }
     }
 
-    // Check file size
-    if ($photo["size"] > 500000) {
-        echo "Sorry, your file is too large.<br>";
-        $upload_ok = 0;
-    }
-
-    // Allow certain file formats
-    if ($file_type != "jpg" && $file_type != "png" && $file_type != "jpeg" && $file_type != "gif") {
-        echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.<br>";
-        $upload_ok = 0;
-    }
-
-    // Check if $upload_ok is set to 0 by an error
-    if ($upload_ok == 0) {
-        echo "Sorry, your file was not uploaded.<br>";
-    } else {
+    if ($upload_ok && empty($errors)) {
         if (move_uploaded_file($photo["tmp_name"], $target_file)) {
             $stmt = $conn->prepare("INSERT INTO recipes (user_id, title, ingredients, instructions, dietary_preferences, cooking_skill, favorite_cuisine, dietary_restrictions, meal_preferences, cooking_time, created_at, photo) VALUES (:user_id, :title, :ingredients, :instructions, :dietary_preferences, :cooking_skill, :favorite_cuisine, :dietary_restrictions, :meal_preferences, :cooking_time, NOW(), :photo)");
             $stmt->bindParam(':user_id', $user_id);
@@ -77,8 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "<div class='alert alert-danger'>Error: Could not add recipe. Error Info: " . htmlspecialchars($error_info[2]) . "</div>";
             }
         } else {
-            echo "<div class='alert alert-danger'>Sorry, there was an error uploading your file. Error code: " . $_FILES['photo']['error'] . "</div>";
+            $errors[] = 'Sorry, there was an error uploading your file.';
         }
+    }
+
+    if (!empty($errors)) {
+        echo "<div class='alert alert-danger'>" . implode('<br>', $errors) . "</div>";
     }
 }
 ?>
@@ -164,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <option value="dessert">Dessert</option>
                 <option value="beverage">Beverage</option>
             </select>
-            <p class="comment">Select meal types (hold Ctrl or Cmd to select multiple).</p>
+            <p class="comment">Select your preferred meal types (hold Ctrl or Cmd to select multiple).</p>
         </div>
 
         <div class="form-group">
@@ -180,5 +201,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit" class="btn btn-primary">Add Recipe</button>
     </form>
 </div>
+
+<script>
+document.getElementById('addRecipeForm').addEventListener('submit', function(event) {
+    var form = event.target;
+    var valid = true;
+    var errorMessage = '';
+
+    // Check title
+    if (form.title.value.trim() === '') {
+        valid = false;
+        errorMessage += 'Title is required.<br>';
+    }
+
+    // Check ingredients
+    if (form.ingredients.value.trim() === '') {
+        valid = false;
+        errorMessage += 'Ingredients are required.<br>';
+    }
+
+    // Check instructions
+    if (form.instructions.value.trim() === '') {
+        valid = false;
+        errorMessage += 'Instructions are required.<br>';
+    }
+
+    // Check cooking time
+    if (form.cooking_time.value.trim() === '' || form.cooking_time.value <= 0) {
+        valid = false;
+        errorMessage += 'Cooking time must be a positive number.<br>';
+    }
+
+    // Check photo
+    var photoInput = form.photo;
+    if (photoInput.files.length === 0) {
+        valid = false;
+        errorMessage += 'Photo is required.<br>';
+    } else {
+        var file = photoInput.files[0];
+        var fileType = file.type.toLowerCase();
+        if (file.size > 500000) {
+            valid = false;
+            errorMessage += 'Sorry, your file is too large.<br>';
+        }
+        if (fileType !== 'image/jpeg' && fileType !== 'image/png' && fileType !== 'image/gif') {
+            valid = false;
+            errorMessage += 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.<br>';
+        }
+    }
+
+    if (!valid) {
+        event.preventDefault();
+        var errorMessageElement = document.getElementById('errorMessage');
+        errorMessageElement.innerHTML = errorMessage;
+        errorMessageElement.style.display = 'block';
+    }
+});
+</script>
+
+<div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
