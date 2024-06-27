@@ -10,6 +10,11 @@ $recipes = $stmt->fetchAll();
 
 <div class="container">
     <h2>Recipes</h2>
+    <?php if (is_logged_in()): ?>
+        <div class="text-right mb-3">
+            <a href="recipe_add.php" class="btn btn-success">Add Recipe</a>
+        </div>
+    <?php endif; ?>
     <div class="row">
         <?php foreach ($recipes as $recipe): ?>
         <div class="col-md-6 mb-4">
