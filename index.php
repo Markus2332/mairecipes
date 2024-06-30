@@ -27,7 +27,9 @@ $recipes = $stmt->fetchAll();
                         <strong>Ingredients:</strong> <?php echo htmlspecialchars($recipe['ingredients']); ?><br>
                         <strong>Instructions:</strong> <?php echo htmlspecialchars($recipe['instructions']); ?><br>
                     </p>
-                    <button class="btn btn-outline-primary like-button" data-recipe-id="<?php echo $recipe['id']; ?>">Like</button>
+                    <?php if (is_logged_in()): ?>
+                        <button class="btn btn-outline-primary like-button" data-recipe-id="<?php echo $recipe['id']; ?>">Like</button>
+                    <?php endif; ?>
                     <a href="recipe.php?id=<?php echo $recipe['id']; ?>" class="btn btn-primary">View Full Recipe</a>
                 </div>
             </div>
