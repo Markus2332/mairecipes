@@ -33,15 +33,20 @@ if ($existing_recipe) {
     $recipe_db_id = $existing_recipe;
 } else {
     // Добавляем новый рецепт в базу данных
-    $stmt = $conn->prepare("INSERT INTO recipes (api_id, user_id, title, ingredients, instructions, photo) VALUES (:api_id, :user_id, :title, :ingredients, :instructions, :photo)");
-    $stmt->bindParam(':api_id', $recipe_id);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->bindParam(':title', $title);
-    $stmt->bindParam(':ingredients', $category . ', ' . $area);
-    $stmt->bindParam(':instructions', $instructions);
-    $stmt->bindParam(':photo', $photo);
-    $stmt->execute();
-    $recipe_db_id = $conn->lastInsertId();
+    try {
+        $stmt = $conn->prepare("INSERT INTO recipes (api_id, user_id, title, ingredients, instructions, photo) VALUES (:api_id, :user_id, :title, :ingredients, :instructions, :photo)");
+        $stmt->bindParam(':api_id', $recipe_id);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':ingredients', $category . ', ' . $area);
+        $stmt->bindParam(':instructions', $instructions);
+        $stmt->bindParam(':photo', $photo);
+        $stmt->execute();
+        $recipe_db_id = $conn->lastInsertId();
+    } catch (PDOException $e) {
+        echo json_encode(['error' => 'Failed to insert recipe: ' . $e->getMessage()]);
+        exit();
+    }
 }
 
 // Проверяем, лайкнул ли пользователь этот рецепт ранее
