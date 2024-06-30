@@ -38,16 +38,16 @@ require_once __DIR__ . '/functions.php';
     </nav>
 </header>
 <style>
-    body{
+
+ body{
         margin-top: 9rem !important;
     }
+        #mainNav a{
+                   color: #fff !important;
+
+        }
     #mainNav{
         background-color: #375755 !important;
-        color: #7fd4c0 !important;
-        font-family: "SB Heading", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
-            "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-            "Segoe UI Symbol", "Noto Color Emoji" !important;
-        font-weight: 700 !important;
     }
 }
 </style>
