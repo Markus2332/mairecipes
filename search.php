@@ -48,7 +48,9 @@ if ($httpcode >= 200 && $httpcode < 300) {
                             <strong>Area:</strong> <?php echo htmlspecialchars($meal['strArea']); ?><br>
                             <strong>Instructions:</strong> <?php echo htmlspecialchars($meal['strInstructions']); ?><br>
                         </p>
-                        <a href="recipe.php?id=<?php echo $meal['idMeal']; ?>" class="btn btn-primary">View Full Recipe</a>
+                        <?php if (is_logged_in()): ?>
+                            <button class="btn btn-outline-primary like-button" data-recipe-id="<?php echo htmlspecialchars($meal['idMeal']); ?>">Like</button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -60,6 +62,49 @@ if ($httpcode >= 200 && $httpcode < 300) {
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.like-button').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var recipeId = this.getAttribute('data-recipe-id');
+            var title = this.closest('.card-body').querySelector('.card-title').innerText;
+            var category = this.closest('.card-body').querySelector('.card-text').innerText.split('\n')[0].split(': ')[1];
+            var area = this.closest('.card-body').querySelector('.card-text').innerText.split('\n')[1].split(': ')[1];
+            var instructions = this.closest('.card-body').querySelector('.card-text').innerText.split('\n')[2].split(': ')[1];
+            var photo = this.closest('.card').querySelector('.card-img-top').src;
+
+            fetch('like_recipe.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    recipe_id: recipeId,
+                    title: title,
+                    category: category,
+                    area: area,
+                    instructions: instructions,
+                    photo: photo
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'liked') {
+                    this.classList.remove('btn-outline-primary');
+                    this.classList.add('btn-primary');
+                    this.innerText = 'Liked';
+                } else if (data.status === 'unliked') {
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-outline-primary');
+                    this.innerText = 'Like';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
 
 <?php
 include __DIR__ . '/includes/footer.php';
