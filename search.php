@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.classList.remove('btn-primary');
                     this.classList.add('btn-outline-primary');
                     this.innerText = 'Like';
+                } else if (data.error) {
+                    console.error('Error:', data.error);
                 }
             })
             .catch(error => console.error('Error:', error));
