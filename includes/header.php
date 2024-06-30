@@ -26,6 +26,7 @@ require_once __DIR__ . '/functions.php';
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/profile_update.php">UPDATE PROFILE</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/logout.php">LOG OUT</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/dashboard.php">DASHBOARD</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/saved_recipes.php">SAVED RECIPES</a></li>
                     <?php else: ?>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/register.php">REGISTER</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/login.php">LOG IN</a></li>
@@ -40,13 +41,13 @@ require_once __DIR__ . '/functions.php';
     body{
         margin-top: 9rem !important;
     }
-        #mainNav a{
-                   color: #fff !important;
- 
-        }
     #mainNav{
         background-color: #375755 !important;
-        
+        color: #7fd4c0 !important;
+        font-family: "SB Heading", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+            "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+            "Segoe UI Symbol", "Noto Color Emoji" !important;
         font-weight: 700 !important;
     }
+}
 </style>
